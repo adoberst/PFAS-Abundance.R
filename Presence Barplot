@@ -1,0 +1,39 @@
+getwd
+
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(reprex)
+library(tidyverse)
+library(reshape2)
+
+MyData <- read.csv("Example.csv", header = TRUE)
+
+
+###### Barplot ggplot ######
+
+
+# Step 1 ggplot needs to have data to long format so, convert. Most packages work with long, SPSS uses wide
+
+Long_MyData <- MyData %>% gather(Chemical, Presence, Chem1, Chem2, Chem3, Chem4, Chem5)
+head(Long_MyData,35)
+
+# Step 2 Plotting in ggplot
+
+
+# Worked but plotted all observations, need to filter
+
+ggplot(Long_MyData, mapping = aes(x=Chemical)) +
+  geom_bar(stat = "count")
+
+# FIlter data using dplyr then apply ggplot
+
+Long_MyData %>%
+  dplyr::filter(Presence == "Yes") %>%
+  ggplot(mapping = aes(x=Chemical, fill=..count..)) +
+  scale_fill_continuous(high ="#132B43", low = "#56B1F7") +
+  geom_bar(stat = "count") + 
+  scale_x_discrete(limits = c("Chem1", "Chem2", "Chem3", "Chem4", "Chem5"),
+                   labels = c("Name1", "Name2", "Name3", "Name4", "Name5")) + 
+  labs(title = "Chemical Frequency", subtitle = "Chemical variants present") + 
+  labs(caption = "Data collected from")
