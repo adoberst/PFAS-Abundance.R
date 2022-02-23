@@ -1,0 +1,26 @@
+############# ggplot for percentage ##################
+
+Long_MyData <- MyData %>% gather(Chemical, Presence, Chem1, Chem2, Chem3, Chem4, Chem5)
+head(Long_MyData,35)
+
+# Create new data frame with percetnage
+perc <- Long_MyData %>%
+  group_by(Chemical, Presence) %>%
+  summarise(count = n()) %>%
+  mutate(perc = count/sum(count))
+
+# Remove no, this is a check for calcs
+PerLong <- perc[which(perc$Presence=="Yes"),]
+
+# Bar
+
+ggplot(PerLong, aes(x=Chemical, y=perc, fill= count)) +
+  geom_bar(stat = "identity") +
+  scale_fill_continuous(high ="#132B43", low = "#56B1F7") +
+  theme(legend.position="none") +
+  scale_x_discrete(limits = c("Chem1", "Chem2", "Chem3", "Chem4", "Chem5"),
+                   labels = c("Name1", "Name2", "Name3", "Name4", "Name5")) + 
+  labs(y="Percent", x="Species") + 
+  labs(title = "Percent chemical Frequency", subtitle = "Chemical variants present") + 
+  labs(caption = "Data collected from")
+  
